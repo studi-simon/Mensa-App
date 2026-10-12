@@ -271,7 +271,6 @@
     </div>
 
     <script>
-        // Hier sind nun die ergänzten Beschreibungen (Zutaten, Tierart etc.) hinzugefügt
         const weeklyMenu = {
             1: { 
                 Klassik: { name: "Schnitzel mit Pommes", desc: "Schweineschnitzel goldgelb paniert, dazu knusprige Pommes frites", price: "4,50 €" }, 
@@ -353,17 +352,14 @@
             const menu = weeklyMenu[dayIndex];
             if(!menu) return; 
             
-            // Name
             document.getElementById('dish-klassik').innerText = menu.Klassik.name;
             document.getElementById('dish-vegetarisch').innerText = menu.Vegetarisch.name;
             document.getElementById('dish-vegan').innerText = menu.Vegan.name;
             
-            // Beschreibung (Zutaten)
             document.getElementById('desc-klassik').innerText = menu.Klassik.desc;
             document.getElementById('desc-vegetarisch').innerText = menu.Vegetarisch.desc;
             document.getElementById('desc-vegan').innerText = menu.Vegan.desc;
             
-            // Preis
             document.getElementById('price-klassik').innerText = menu.Klassik.price;
             document.getElementById('price-vegetarisch').innerText = menu.Vegetarisch.price;
             document.getElementById('price-vegan').innerText = menu.Vegan.price;
@@ -529,13 +525,17 @@
             submitBtn.disabled = true; submitBtn.innerText = "Sende Bestellung... ⏳";
             
             // HIER BLEIBT IHRE URL GENAU WIE VORHER
-            const backendURL = 'https://script.google.com/macros/s/AKfycbzt8CpUZe23T_3Tmf7JpftvA79RKA7N909uNTMnHvj9o0BppVFynNz0LCME-MJqMCNL/exec';
+            const backendURL = 'https://script.google.com/macros/s/AKfycbz6mCg8URut7ZA_eNubaBVYZlA8tItjr4TMPWR0IjWfJ3t0TcXY8FxdL8aY05OzevI/exec';
             const remarks = document.getElementById('remarks').value || "-";
             let successCount = 0;
 
             for (const item of cart) {
                 const formData = new FormData();
-                formData.set('date', item.date + ' um ' + item.time);
+                
+                // Datum und Zeit getrennt für das Backend
+                formData.set('datum', item.date);
+                formData.set('zeit', item.time);
+                
                 formData.set('name', item.name);
                 formData.set('email', item.email);
                 
