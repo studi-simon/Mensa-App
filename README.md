@@ -1,2 +1,0 @@
-# Mensa-App
-Mensa App

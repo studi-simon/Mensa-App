@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensa Vorbestellung - HS Kempten</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 0; }
+        .header-banner { height: 180px; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80') center/cover; border-bottom: 6px solid #8cc63f; }
+        .container { max-width: 600px; margin: -60px auto 40px auto; background: white; padding: 35px; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; }
+        
+        h2 { color: #333; text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 24px; }
+        
+        .speiseplan-container { margin-bottom: 25px; }
+        .speiseplan-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .week-header { display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 15px; color: #444; margin-bottom: 15px; }
+        .days-row { display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; }
+        .day-item { flex: 1; text-align: center; padding: 8px 0; cursor: pointer; color: #333; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px solid transparent; transition: 0.2s; }
+        .day-item.disabled { color: #bbb; cursor: not-allowed; }
+        .day-item.active { color: #0056b3; font-weight: bold; border-bottom: 2px solid #00aaff; }
+        .day-name { font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }
+        .day-date { font-size: 15px; }
+        .day-item.heute .day-name { display: none; }
+        .day-item.heute .day-date { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
+
+        .form-group { margin-bottom: 20px; }
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+        label.field-label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #555; text-transform: uppercase; }
+        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; }
+        .hidden { display: none !important; }
+        
+        .menu-options { display: flex; gap: 12px; margin-bottom: 10px; }
+        .menu-card { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #fafafa; transition: all 0.2s ease-in-out; overflow: hidden; display: flex; flex-direction: column; }
+        .menu-card:hover { border-color: #8cc63f; }
+        .menu-card input[type="radio"] { display: none; }
+        .menu-img { width: 100%; height: 110px; object-fit: cover; background-color: #eee; }
+        .menu-card-content { padding: 12px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .menu-category { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; }
+        .dish-name { font-size: 12px; color: #666; min-height: 34px; line-height: 1.3; }
+        .dish-price { font-size: 15px; font-weight: 900; color: #558b2f; margin-top: 8px; background: #f1f8e9; padding: 4px; border-radius: 4px; }
+        
+        .menu-card.active { border-color: #8cc63f; background-color: #f9fced; }
+        .extra-card { background-color: #f9fced; border: 1px solid #d4e157; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        
+        .price-display { text-align: right; font-size: 18px; margin-bottom: 15px; color: #333; }
+        .price-display span { font-weight: 900; color: #0056b3; font-size: 22px; }
+
+        button.btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button.btn-primary { background-color: #0056b3; color: white; }
+        button.btn-primary:hover { background-color: #004494; }
+        button.btn-secondary { background-color: #8cc63f; color: white; margin-top: 10px; }
+        button.btn-secondary:hover { background-color: #7ab334; }
+        button:disabled { background-color: #ccc !important; cursor: not-allowed; }
+
+        /* --- WARENKORB DESIGN --- */
+        .cart-section { margin-top: 40px; border-top: 2px dashed #ccc; padding-top: 25px; }
+        .cart-title { font-size: 20px; color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .cart-list { list-style: none; padding: 0; margin: 0 0 20px 0; }
+        .cart-item { background: #fff; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cart-item-details { flex-grow: 1; }
+        .cart-item-title { font-weight: bold; font-size: 15px; margin-bottom: 3px; color: #0056b3; }
+        .cart-item-sub { font-size: 13px; color: #666; }
+        .cart-item-price { font-weight: 900; font-size: 16px; color: #558b2f; margin-left: 15px; }
+        .cart-item-remove { background: #ffebee; color: #c62828; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-left: 15px; font-size: 12px; font-weight: bold; }
+        .cart-item-remove:hover { background: #ffcdd2; }
+        
+        .cart-total { text-align: right; font-size: 20px; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .cart-total span { color: #0056b3; font-size: 24px; }
+
+        #message { margin-top: 20px; text-align: center; font-weight: bold; padding: 15px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header-banner"></div>
+    <div class="container">
+        
+        <div class="speiseplan-container">
+            <div class="speiseplan-title">Speiseplan</div>
+            <div class="week-header">
+                <div id="weekLabel">Monat - KW --</div>
+            </div>
+            <div class="days-row" id="daysRow"></div>
+        </div>
+
+        <form id="menuForm">
+            <input type="hidden" id="date" name="date">
+            
+            <div class="row">
+                <div class="form-group">
+                    <label class="field-label" for="time">Abholzeit</label>
+                    <select id="time" name="time" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="11:00">11:00 Uhr</option>
+                        <option value="11:15">11:15 Uhr</option>
+                        <option value="11:30">11:30 Uhr</option>
+                        <option value="11:45">11:45 Uhr</option>
+                        <option value="12:00">12:00 Uhr</option>
+                        <option value="12:15">12:15 Uhr</option>
+                        <option value="12:30">12:30 Uhr</option>
+                        <option value="12:45">12:45 Uhr</option>
+                        <option value="13:00">13:00 Uhr</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label class="field-label" for="name">Vor- und Nachname</label>
+                    <input type="text" id="name" name="name" required placeholder="Max Mustermann">
+                </div>
+                <div class="form-group">
+                    <label class="field-label" for="email">E-Mail</label>
+                    <input type="email" id="email" name="email" required pattern=".*@(stud\.)?hs-kempten\.de$" placeholder="@stud.hs-kempten.de">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="field-label">Tagesmenü wählen</label>
+                <div class="menu-options">
+                    <label class="menu-card" id="card-klassik">
+                        <input type="radio" name="menu" value="Klassik" required>
+                        <img class="menu-img" id="img-klassik" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
+                        <div class="menu-card-content">
+                            <span class="menu-category">🥩 Klassik</span>
+                            <span class="dish-name" id="dish-klassik">Laden...</span>
+                            <span class="dish-price" id="price-klassik">-</span>
+                        </div>
+                    </label>
+                    <label class="menu-card" id="card-vegetarisch">
+                        <input type="radio" name="menu" value="Vegetarisch" required>
+                        <img class="menu-img" id="img-vegetarisch" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
+                        <div class="menu-card-content">
+                            <span class="menu-category">🥦 Veggie</span>
+                            <span class="dish-name" id="dish-vegetarisch">Laden...</span>
+                            <span class="dish-price" id="price-vegetarisch">-</span>
+                        </div>
+                    </label>
+                    <label class="menu-card" id="card-vegan">
+                        <input type="radio" name="menu" value="Vegan" required>
+                        <img class="menu-img" id="img-vegan" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
+                        <div class="menu-card-content">
+                            <span class="menu-category">🌱 Vegan</span>
+                            <span class="dish-name" id="dish-vegan">Laden...</span>
+                            <span class="dish-price" id="price-vegan">-</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="extra-card hidden" id="extraMeatGroup">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="saladOption" value="Ja, Beilagensalat"> 
+                    🥗 Kostenpflichtigen Beilagensalat dazu? (+ 1,50 €)
+                </label>
+            </div>
+            <div class="extra-card hidden" id="extraVeggieGroup">
+                <label class="field-label" style="color:#558b2f; margin-bottom:10px;">🎁 Gratis Obst auswählen:</label>
+                <select id="fruitOption">
+                    <option value="Kein Obst">Nein danke</option>
+                    <option value="Apfel">🍎 Bio-Apfel</option>
+                    <option value="Banane">🍌 Fairtrade Banane</option>
+                </select>
+            </div>
+
+            <div class="price-display">Aktueller Posten: <span id="currentPrice">0,00 €</span></div>
+
+            <button type="button" class="btn btn-secondary" id="addToCartBtn">In den Warenkorb 🛒</button>
+        </form>
+
+        <!-- NEUER BEREICH: WARENKORB -->
+        <div id="cartSection" class="cart-section hidden">
+            <div class="cart-title">🛒 Dein Warenkorb</div>
+            <ul class="cart-list" id="cartList"></ul>
+            
+            <div class="cart-total">Gesamtsumme: <span id="cartTotalSum">0,00 €</span></div>
+            
+            <div class="form-group">
+                <label class="field-label" for="remarks">Bemerkungen (optional)</label>
+                <textarea id="remarks" name="remarks" rows="3" placeholder="Z.B. Bitte den Salat ohne Dressing, Allergiehinweise etc."></textarea>
+            </div>
+
+            <button type="button" class="btn btn-primary" id="checkoutBtn">Jetzt alles kostenpflichtig bestellen</button>
+            <div id="message"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const weeklyMenu = {
+            1: { Klassik: { name: "Schnitzel mit Pommes", price: "4,50 €", img: "https://images.unsplash.com/photo-1599921841143-819065a55cc6?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Käsespätzle", price: "3,80 €", img: "https://images.unsplash.com/photo-1611270629569-8b357cb88da9?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Gemüse-Curry", price: "3,50 €", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" } },
+            2: { Klassik: { name: "Spaghetti Bolognese", price: "4,20 €", img: "https://images.unsplash.com/photo-1622973536968-3ead9e780960?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Gemüselasagne", price: "4,00 €", img: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Falafel-Bowl", price: "4,50 €", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" } },
+            3: { Klassik: { name: "Schweinebraten", price: "5,10 €", img: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Spinatknödel", price: "3,90 €", img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Linsen-Dal", price: "3,40 €", img: "https://images.unsplash.com/photo-1548943487-a2e4b43b485d?auto=format&fit=crop&w=400&q=80" } },
+            4: { Klassik: { name: "Currywurst mit Wedges", price: "4,00 €", img: "https://images.unsplash.com/photo-1596683720379-b73ce280f2d4?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Schupfnudeln", price: "3,80 €", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Quinoa-Salat", price: "4,10 €", img: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=400&q=80" } },
+            5: { Klassik: { name: "Backfisch mit Kartoffelsalat", price: "4,80 €", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Kartoffelpuffer", price: "3,50 €", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Ofengemüse mit Tofu", price: "4,20 €", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" } }
+        };
+
+        // --- DATUM & KALENDER LOGIK ---
+        function getLocalDateString(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        const daysRow = document.getElementById('daysRow');
+        const weekLabel = document.getElementById('weekLabel');
+        const dateInput = document.getElementById('date');
+        
+        let today = new Date(); today.setHours(0,0,0,0);
+        let activeDate = new Date(today);
+        if (activeDate.getDay() === 0 || activeDate.getDay() === 6) activeDate.setDate(activeDate.getDate() + (activeDate.getDay() === 0 ? 1 : 2));
+
+        let monday = new Date(activeDate);
+        let currentDayNum = monday.getDay() === 0 ? 7 : monday.getDay();
+        monday.setDate(monday.getDate() - currentDayNum + 1);
+
+        const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+        weekLabel.innerText = `${monthNames[monday.getMonth()]}`;
+
+        const dayNames = ["MO", "DI", "MI", "DO", "FR"];
+        
+        for(let i = 0; i < 5; i++) {
+            let iterDate = new Date(monday); iterDate.setDate(monday.getDate() + i);
+            
+            let div = document.createElement('div');
+            div.className = 'day-item';
+            
+            let isPast = iterDate < today;
+            let isToday = iterDate.getTime() === today.getTime();
+            
+            if (isPast) div.classList.add('disabled');
+            if (isToday) div.classList.add('heute');
+            
+            div.innerHTML = `<span class="day-name">${dayNames[i]}</span><span class="day-date">${isToday ? 'Heute' : iterDate.getDate()}</span>`;
+            
+            if (!isPast) {
+                div.addEventListener('click', () => {
+                    document.querySelectorAll('.day-item').forEach(d => d.classList.remove('active'));
+                    div.classList.add('active');
+                    dateInput.value = getLocalDateString(iterDate);
+                    updateMenu(iterDate.getDay());
+                    resetMenuSelection();
+                });
+            }
+            
+            daysRow.appendChild(div);
+            if (iterDate.getTime() === activeDate.getTime() && !isPast) { div.click(); } 
+            else if (!dateInput.value && !isPast) { div.click(); }
+        }
+
+        function updateMenu(dayIndex) {
+            const menu = weeklyMenu[dayIndex];
+            if(!menu) return; 
+            document.getElementById('img-klassik').src = menu.Klassik.img;
+            document.getElementById('img-vegetarisch').src = menu.Vegetarisch.img;
+            document.getElementById('img-vegan').src = menu.Vegan.img;
+            
+            document.getElementById('dish-klassik').innerText = menu.Klassik.name;
+            document.getElementById('dish-vegetarisch').innerText = menu.Vegetarisch.name;
+            document.getElementById('dish-vegan').innerText = menu.Vegan.name;
+
+            document.getElementById('price-klassik').innerText = menu.Klassik.price;
+            document.getElementById('price-vegetarisch').innerText = menu.Vegetarisch.price;
+            document.getElementById('price-vegan').innerText = menu.Vegan.price;
+        }
+
+        function resetMenuSelection() {
+            document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('input[name="menu"]').forEach(r => r.checked = false);
+            document.getElementById('extraMeatGroup').classList.add('hidden');
+            document.getElementById('extraVeggieGroup').classList.add('hidden');
+            document.getElementById('saladOption').checked = false;
+            document.getElementById('fruitOption').value = "Kein Obst";
+            calculateCurrentPrice();
+        }
+
+        function calculateCurrentPrice() {
+            let total = 0;
+            const dateVal = document.getElementById('date').value;
+            const checkedMenu = document.querySelector('input[name="menu"]:checked');
+
+            if (dateVal && checkedMenu) {
+                const selectedDay = new Date(dateVal).getDay();
+                const selectedMenuStr = checkedMenu.value;
+                if (weeklyMenu[selectedDay] && weeklyMenu[selectedDay][selectedMenuStr]) {
+                    const priceStr = weeklyMenu[selectedDay][selectedMenuStr].price;
+                    total += parseFloat(priceStr.replace(',', '.').replace(' €', ''));
+                    if (selectedMenuStr === 'Klassik' && document.getElementById('saladOption').checked) total += 1.50;
+                }
+            }
+            document.getElementById('currentPrice').innerText = total.toFixed(2).replace('.', ',') + " €";
+            return total; // Gibt die Zahl für den Warenkorb zurück
+        }
+
+        document.querySelectorAll('input[name="menu"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('active'));
+                this.closest('.menu-card').classList.add('active');
+
+                if (this.value === 'Klassik') {
+                    document.getElementById('extraMeatGroup').classList.remove('hidden'); 
+                    document.getElementById('extraVeggieGroup').classList.add('hidden');
+                } else {
+                    document.getElementById('extraVeggieGroup').classList.remove('hidden'); 
+                    document.getElementById('extraMeatGroup').classList.add('hidden');
+                    document.getElementById('saladOption').checked = false; 
+                }
+                calculateCurrentPrice();
+            });
+        });
+
+        document.getElementById('saladOption').addEventListener('change', calculateCurrentPrice);
+
+        // --- WARENKORB LOGIK ---
+        let cart = [];
+
+        document.getElementById('addToCartBtn').addEventListener('click', function() {
+            const form = document.getElementById('menuForm');
+            // Browser-Validierung erzwingen (prüft ob Name, Mail, etc. ausgefüllt sind)
+            if (!form.reportValidity()) return;
+            
+            if (!document.querySelector('input[name="menu"]:checked')) {
+                alert("Bitte wählen Sie ein Tagesmenü aus."); return;
+            }
+
+            const rawDate = document.getElementById('date').value;
+            const selectedDay = new Date(rawDate).getDay();
+            const time = document.getElementById('time').value;
+            const menuType = document.querySelector('input[name="menu"]:checked').value;
+            const dishName = weeklyMenu[selectedDay][menuType].name;
+            
+            let extraValue = "Nein";
+            if (menuType === 'Klassik' && document.getElementById('saladOption').checked) extraValue = "Beilagensalat";
+            else if (menuType !== 'Klassik' && document.getElementById('fruitOption').value !== "Kein Obst") extraValue = document.getElementById('fruitOption').value;
+
+            const priceNum = calculateCurrentPrice();
+
+            // Zum Warenkorb hinzufügen
+            cart.push({
+                date: rawDate,
+                time: time,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                menuType: menuType,
+                dishName: dishName,
+                extraValue: extraValue,
+                priceNum: priceNum,
+                cartId: Date.now() // Eindeutige ID zum Löschen
+            });
+
+            // UI aktualisieren
+            renderCart();
+            resetMenuSelection();
+            
+            // Kleine Bestätigung anzeigen
+            const btn = document.getElementById('addToCartBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "✅ Hinzugefügt!";
+            btn.style.backgroundColor = "#28a745";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "#8cc63f";
+            }, 1500);
+        });
+
+        function renderCart() {
+            const cartSection = document.getElementById('cartSection');
+            const cartList = document.getElementById('cartList');
+            const cartTotalSum = document.getElementById('cartTotalSum');
+            
+            cartList.innerHTML = '';
+            let totalSum = 0;
+
+            if (cart.length === 0) {
+                cartSection.classList.add('hidden');
+                return;
+            }
+
+            cart.forEach(item => {
+                totalSum += item.priceNum;
+                
+                // Datum schön formatieren (z.B. "14.10.2026")
+                const d = new Date(item.date);
+                const displayDate = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth()+1).padStart(2, '0')}.${d.getFullYear()}`;
+                
+                const extraText = item.extraValue !== "Nein" ? `<br><em>+ ${item.extraValue}</em>` : "";
+
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = `
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${displayDate} um ${item.time} Uhr</div>
+                        <div class="cart-item-sub">${item.menuType}: ${item.dishName} ${extraText}</div>
+                    </div>
+                    <div class="cart-item-price">${item.priceNum.toFixed(2).replace('.', ',')} €</div>
+                    <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.cartId})">X</button>
+                `;
+                cartList.appendChild(li);
+            });
+
+            cartTotalSum.innerText = totalSum.toFixed(2).replace('.', ',') + " €";
+            cartSection.classList.remove('hidden');
+        }
+
+        window.removeFromCart = function(id) {
+            cart = cart.filter(item => item.cartId !== id);
+            renderCart();
+        }
+
+        // --- CHECKOUT LOGIK ---
+        document.getElementById('checkoutBtn').addEventListener('click', async function() {
+            if (cart.length === 0) return;
+
+            const submitBtn = document.getElementById('checkoutBtn');
+            const messageDiv = document.getElementById('message');
+            submitBtn.disabled = true; submitBtn.innerText = "Sende Bestellungen...";
+            
+            // IHRE BACKEND URL:
+            const backendURL = 'https://script.google.com/macros/s/AKfycbyybn92KBzp7dBL5K4TbiqusKIkYgd8aT_sQZQYde_imul1z_SVnZAd3TSUlbQ3rghU/exec';
+            
+            const remarks = document.getElementById('remarks').value || "-";
+
+            let successCount = 0;
+
+            // Jedes Gericht im Warenkorb wird einzeln gesendet
+            for (const item of cart) {
+                const formData = new FormData();
+                formData.set('date', item.date + ' um ' + item.time);
+                formData.set('name', item.name);
+                formData.set('email', item.email);
+                
+                // Format wie früher: "Klassik (Schnitzel - 4,50 €)"
+                const priceStr = item.priceNum.toFixed(2).replace('.', ',') + " €";
+                formData.set('menu', `${item.menuType} (${item.dishName} - ${priceStr})`);
+                formData.set('extra', item.extraValue);
+                formData.set('bemerkungen', remarks);
+
+                try {
+                    await fetch(backendURL, { method: 'POST', mode: 'no-cors', body: formData });
+                    successCount++;
+                } catch (error) {
+                    console.error("Fehler beim Senden von Item", item);
+                }
+            }
+
+            if (successCount === cart.length) {
+                messageDiv.innerText = "✅ Alle Gerichte erfolgreich bestellt!";
+                messageDiv.style.color = "#2e7d32"; messageDiv.style.backgroundColor = "#e8f5e9";
+                cart = []; // Warenkorb leeren
+                renderCart();
+                document.getElementById('remarks').value = ""; // Bemerkungen leeren
+            } else {
+                messageDiv.innerText = "❌ Es gab einen Fehler. Einige Gerichte konnten nicht gesendet werden.";
+                messageDiv.style.color = "red";
+            }
+            
+            submitBtn.disabled = false; submitBtn.innerText = "Jetzt alles kostenpflichtig bestellen";
+        });
+    </script>
+</body>
+</html>
