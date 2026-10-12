@@ -38,15 +38,16 @@
         input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; }
         .hidden { display: none !important; }
         
+        /* Design für die Menükarten mit Platz für Beschreibungen */
         .menu-options { display: flex; gap: 12px; margin-bottom: 10px; }
-        .menu-card { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #fafafa; transition: all 0.2s ease-in-out; overflow: hidden; display: flex; flex-direction: column; }
-        .menu-card:hover { border-color: #8cc63f; }
+        .menu-card { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #fafafa; transition: all 0.2s ease-in-out; display: flex; flex-direction: column; padding: 15px 10px; }
+        .menu-card:hover { border-color: #8cc63f; background-color: #fcfcfc; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .menu-card input[type="radio"] { display: none; }
-        .menu-img { width: 100%; height: 90px; object-fit: cover; background-color: #eee; }
-        .menu-card-content { padding: 12px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        .menu-category { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .dish-name { font-size: 11px; color: #666; min-height: 32px; line-height: 1.3; }
-        .dish-price { font-size: 14px; font-weight: 900; color: #558b2f; margin-top: 8px; background: #f1f8e9; padding: 4px; border-radius: 4px; }
+        .menu-card-content { text-align: center; display: flex; flex-direction: column; flex-grow: 1; justify-content: flex-start; }
+        .menu-category { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .dish-name { font-size: 14px; color: #333; font-weight: 700; line-height: 1.3; }
+        .dish-desc { font-size: 11px; color: #777; font-style: italic; margin-top: 6px; line-height: 1.3; flex-grow: 1; }
+        .dish-price { font-size: 15px; font-weight: 900; color: #558b2f; margin-top: 15px; background: #f1f8e9; padding: 6px; border-radius: 4px; display: inline-block; }
         .menu-card.active { border-color: #8cc63f; background-color: #f9fced; }
         
         .extra-card { background-color: #f9fced; border: 1px solid #d4e157; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
@@ -140,29 +141,29 @@
                     <div class="menu-options">
                         <label class="menu-card" id="card-klassik">
                             <input type="radio" name="menu" value="Klassik" required>
-                            <img class="menu-img" id="img-klassik" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
                             <div class="menu-card-content">
                                 <span class="menu-category">🥩 Klassik</span>
                                 <span class="dish-name" id="dish-klassik">Laden...</span>
-                                <span class="dish-price" id="price-klassik">-</span>
+                                <span class="dish-desc" id="desc-klassik"></span>
+                                <div><span class="dish-price" id="price-klassik">-</span></div>
                             </div>
                         </label>
                         <label class="menu-card" id="card-vegetarisch">
                             <input type="radio" name="menu" value="Vegetarisch" required>
-                            <img class="menu-img" id="img-vegetarisch" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
                             <div class="menu-card-content">
                                 <span class="menu-category">🥦 Veggie</span>
                                 <span class="dish-name" id="dish-vegetarisch">Laden...</span>
-                                <span class="dish-price" id="price-vegetarisch">-</span>
+                                <span class="dish-desc" id="desc-vegetarisch"></span>
+                                <div><span class="dish-price" id="price-vegetarisch">-</span></div>
                             </div>
                         </label>
                         <label class="menu-card" id="card-vegan">
                             <input type="radio" name="menu" value="Vegan" required>
-                            <img class="menu-img" id="img-vegan" src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80';" alt="Menü">
                             <div class="menu-card-content">
                                 <span class="menu-category">🌱 Vegan</span>
                                 <span class="dish-name" id="dish-vegan">Laden...</span>
-                                <span class="dish-price" id="price-vegan">-</span>
+                                <span class="dish-desc" id="desc-vegan"></span>
+                                <div><span class="dish-price" id="price-vegan">-</span></div>
                             </div>
                         </label>
                     </div>
@@ -270,12 +271,33 @@
     </div>
 
     <script>
+        // Hier sind nun die ergänzten Beschreibungen (Zutaten, Tierart etc.) hinzugefügt
         const weeklyMenu = {
-            1: { Klassik: { name: "Schnitzel mit Pommes", price: "4,50 €", img: "https://images.unsplash.com/photo-1599921841143-819065a55cc6?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Käsespätzle", price: "3,80 €", img: "https://images.unsplash.com/photo-1612871689353-cccf581d667b?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Gemüse-Curry", price: "3,50 €", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=400&q=80" } },
-            2: { Klassik: { name: "Spaghetti Bolognese", price: "4,20 €", img: "https://images.unsplash.com/photo-1622973536968-3ead9e780960?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Gemüselasagne", price: "4,00 €", img: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Falafel-Bowl", price: "4,50 €", img: "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?auto=format&fit=crop&w=400&q=80" } },
-            3: { Klassik: { name: "Schweinebraten", price: "5,10 €", img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Spinatknödel", price: "3,90 €", img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Linsen-Dal", price: "3,40 €", img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=400&q=80" } },
-            4: { Klassik: { name: "Currywurst mit Wedges", price: "4,00 €", img: "https://images.unsplash.com/photo-1626082895617-2c67039a0fa0?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Schupfnudeln", price: "3,80 €", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Quinoa-Salat", price: "4,10 €", img: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=400&q=80" } },
-            5: { Klassik: { name: "Backfisch mit Kartoffelsalat", price: "4,80 €", img: "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?auto=format&fit=crop&w=400&q=80" }, Vegetarisch: { name: "Kartoffelpuffer", price: "3,50 €", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" }, Vegan: { name: "Ofengemüse mit Tofu", price: "4,20 €", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80" } }
+            1: { 
+                Klassik: { name: "Schnitzel mit Pommes", desc: "Schweineschnitzel goldgelb paniert, dazu knusprige Pommes frites", price: "4,50 €" }, 
+                Vegetarisch: { name: "Käsespätzle", desc: "Hausgemacht, mit kräftigem Bergkäse und Röstzwiebeln", price: "3,80 €" }, 
+                Vegan: { name: "Gemüse-Curry", desc: "Mildes Kokos-Curry mit Blumenkohl, Karotten und Kichererbsen", price: "3,50 €" } 
+            },
+            2: { 
+                Klassik: { name: "Spaghetti Bolognese", desc: "Klassisch mit Rinderhackfleisch und fruchtiger Tomatensoße", price: "4,20 €" }, 
+                Vegetarisch: { name: "Gemüselasagne", desc: "Mit Zucchini, Karotten, Paprika und cremiger Béchamelsauce", price: "4,00 €" }, 
+                Vegan: { name: "Falafel-Bowl", desc: "Knusprige Kichererbsenbällchen mit Hummus, Couscous und Gurke", price: "4,50 €" } 
+            },
+            3: { 
+                Klassik: { name: "Schweinebraten", desc: "Zarter Braten vom Schwein mit Biersoße und Semmelknödeln", price: "5,10 €" }, 
+                Vegetarisch: { name: "Spinatknödel", desc: "In Nussbutter geschwenkt, garniert mit frischem Hartkäse", price: "3,90 €" }, 
+                Vegan: { name: "Linsen-Dal", desc: "Würzige rote Linsen mit Ingwer, Kurkuma und Basmatireis", price: "3,40 €" } 
+            },
+            4: { 
+                Klassik: { name: "Currywurst mit Wedges", desc: "Rote Wurst (Schwein) in fruchtig-scharfer Soße mit Kartoffelspalten", price: "4,00 €" }, 
+                Vegetarisch: { name: "Schupfnudeln", desc: "Gebraten mit mildem Sauerkraut und frischen Kräutern", price: "3,80 €" }, 
+                Vegan: { name: "Quinoa-Salat", desc: "Mit Avocado, Kirschtomaten, Mais und frischem Limetten-Dressing", price: "4,10 €" } 
+            },
+            5: { 
+                Klassik: { name: "Backfisch mit Kartoffelsalat", desc: "Seelachsfilet in knuspriger Panade mit klassischem Essig-Öl-Kartoffelsalat", price: "4,80 €" }, 
+                Vegetarisch: { name: "Kartoffelpuffer", desc: "Frisch ausgebacken, serviert mit hausgemachtem Apfelmus", price: "3,50 €" }, 
+                Vegan: { name: "Ofengemüse mit Tofu", desc: "Marinierter Räuchertofu mit Süßkartoffeln, Brokkoli und Sesam", price: "4,20 €" } 
+            }
         };
 
         function getLocalDateString(d) {
@@ -330,12 +352,18 @@
         function updateMenu(dayIndex) {
             const menu = weeklyMenu[dayIndex];
             if(!menu) return; 
-            document.getElementById('img-klassik').src = menu.Klassik.img;
-            document.getElementById('img-vegetarisch').src = menu.Vegetarisch.img;
-            document.getElementById('img-vegan').src = menu.Vegan.img;
+            
+            // Name
             document.getElementById('dish-klassik').innerText = menu.Klassik.name;
             document.getElementById('dish-vegetarisch').innerText = menu.Vegetarisch.name;
             document.getElementById('dish-vegan').innerText = menu.Vegan.name;
+            
+            // Beschreibung (Zutaten)
+            document.getElementById('desc-klassik').innerText = menu.Klassik.desc;
+            document.getElementById('desc-vegetarisch').innerText = menu.Vegetarisch.desc;
+            document.getElementById('desc-vegan').innerText = menu.Vegan.desc;
+            
+            // Preis
             document.getElementById('price-klassik').innerText = menu.Klassik.price;
             document.getElementById('price-vegetarisch').innerText = menu.Vegetarisch.price;
             document.getElementById('price-vegan').innerText = menu.Vegan.price;
@@ -420,7 +448,6 @@
             const menuType = document.querySelector('input[name="menu"]:checked').value;
             const dishName = weeklyMenu[selectedDay][menuType].name;
             
-            // NEU: Essen und Trinken trennen für das Skript
             let foodExtra = "-";
             if (menuType === 'Klassik' && document.getElementById('saladOption').checked) foodExtra = "Beilagensalat";
             else if (menuType !== 'Klassik' && document.getElementById('fruitOption').value !== "Kein Obst") foodExtra = document.getElementById('fruitOption').value;
@@ -501,7 +528,7 @@
             const submitBtn = document.getElementById('checkoutBtn');
             submitBtn.disabled = true; submitBtn.innerText = "Sende Bestellung... ⏳";
             
-            // IHRE BACKEND URL HIER:
+            // HIER BLEIBT IHRE URL GENAU WIE VORHER
             const backendURL = 'https://script.google.com/macros/s/AKfycbzt8CpUZe23T_3Tmf7JpftvA79RKA7N909uNTMnHvj9o0BppVFynNz0LCME-MJqMCNL/exec';
             const remarks = document.getElementById('remarks').value || "-";
             let successCount = 0;
@@ -515,7 +542,6 @@
                 const priceStr = item.priceNum.toFixed(2).replace('.', ',') + " €";
                 formData.set('menu', `${item.menuType} (${item.dishName} - ${priceStr})`);
                 
-                // Getrennte Daten für das Backend!
                 formData.set('extra', item.foodExtra);
                 formData.set('getraenk', item.drinkExtra);
                 formData.set('bemerkungen', remarks);
