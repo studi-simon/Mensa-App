@@ -38,7 +38,6 @@
         input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; }
         .hidden { display: none !important; }
         
-        /* Design für die Menükarten mit Platz für Beschreibungen */
         .menu-options { display: flex; gap: 12px; margin-bottom: 10px; }
         .menu-card { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #fafafa; transition: all 0.2s ease-in-out; display: flex; flex-direction: column; padding: 15px 10px; }
         .menu-card:hover { border-color: #8cc63f; background-color: #fcfcfc; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -70,28 +69,48 @@
         button.btn-primary:hover { background-color: #004494; }
         button.btn-secondary { background-color: #8cc63f; color: white; margin-top: 10px; }
         button.btn-secondary:hover { background-color: #7ab334; }
-        button:disabled { background-color: #ccc !important; cursor: not-allowed; }
+        button.btn-outline { background-color: white; color: #0056b3; border: 2px solid #0056b3; margin-top: 10px; }
+        button.btn-outline:hover { background-color: #e6f2ff; }
+        button:disabled { background-color: #ccc !important; color: #fff !important; cursor: not-allowed; border-color: #ccc; }
 
         .cart-title { font-size: 18px; color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .cart-list { list-style: none; padding: 0; margin: 0 0 20px 0; max-height: 350px; overflow-y: auto; }
         .cart-empty-msg { text-align: center; color: #999; font-style: italic; margin-bottom: 20px; font-size: 14px; }
         
-        .cart-item { background: #fff; border: 1px solid #e0e0e0; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .cart-item { background: #fff; border: 1px solid #e0e0e0; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; flex-direction: column; }
+        .cart-item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .cart-item-details { flex-grow: 1; }
         .cart-item-title { font-weight: bold; font-size: 13px; margin-bottom: 3px; color: #0056b3; }
         .cart-item-sub { font-size: 12px; color: #666; }
+        .cart-item-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 8px; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 8px; background: #f4f6f9; border-radius: 4px; padding: 2px 6px; }
+        .qty-btn { background: none; border: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #0056b3; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; padding: 0; }
+        .qty-btn:disabled { color: #ccc; cursor: not-allowed; }
+        .qty-display { font-size: 13px; font-weight: bold; min-width: 15px; text-align: center; }
+        
         .cart-item-price { font-weight: 900; font-size: 14px; color: #558b2f; white-space: nowrap; }
-        .cart-item-remove { background: #ffebee; color: #c62828; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; margin-top: 5px; }
+        .cart-item-remove { background: #ffebee; color: #c62828; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .cart-item-remove:hover { background: #ffcdd2; }
         
         .cart-total { text-align: right; font-size: 16px; font-weight: bold; color: #333; margin-bottom: 20px; border-top: 2px dashed #eee; padding-top: 15px; }
         .cart-total span { color: #0056b3; font-size: 20px; display: block; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-box { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; margin: 0 20px; }
         .modal-icon { font-size: 50px; margin-bottom: 15px; }
         .modal-title { font-size: 22px; color: #2e7d32; margin-bottom: 10px; margin-top: 0; }
-        .modal-text { color: #555; margin-bottom: 25px; line-height: 1.5; }
+        .modal-text { color: #555; margin-bottom: 25px; line-height: 1.5; font-size: 15px; }
+        
+        .coin-result-box { margin: 20px 0; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; display: none; }
+        .coin-win { background-color: #e8f5e9; color: #2e7d32; border: 2px solid #81c784; }
+        .coin-lose { background-color: #ffebee; color: #c62828; border: 2px solid #e57373; }
+        .coin-spin { display: inline-block; animation: flip 1s infinite linear; font-size: 40px; margin-bottom: 10px; }
+        @keyframes flip { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+        
+        .final-price-box { background: #f4f6f9; border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .final-price-label { font-size: 14px; color: #666; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
+        .final-price-amount { font-size: 28px; font-weight: 900; color: #0056b3; }
     </style>
 </head>
 <body>
@@ -252,15 +271,50 @@
         </div>
     </div>
 
-    <!-- POPUP MODALS -->
+    <!-- COIN TOSS MODAL -->
+    <div id="coinModal" class="modal-overlay hidden">
+        <div class="modal-box" id="coinBoxInner">
+            <div class="modal-icon">🎲</div>
+            <h3 class="modal-title" style="color: #333;">Lust auf einen Münzwurf?</h3>
+            <p class="modal-text">
+                Fordere dein Glück heraus! <br><br>
+                🪙 <b>Kopf:</b> Du erhältst <b>50% Rabatt</b> auf diese Bestellung!<br>
+                🪙 <b>Zahl:</b> Du zahlst <b>50% Aufschlag</b>!<br><br>
+                <i>Die Bestellung wird direkt nach dem Wurf automatisch und verbindlich gesendet!</i>
+            </p>
+            
+            <div id="coinAnimation" class="hidden">
+                <span class="coin-spin">🪙</span>
+                <p>Münze wird geworfen...</p>
+            </div>
+            
+            <div id="coinResultBox" class="coin-result-box"></div>
+
+            <div id="coinActionButtons">
+                <button type="button" class="btn btn-primary" id="btnTossCoin" style="background-color: #ff9800;">Ja, Münze werfen! 🤞</button>
+                <button type="button" class="btn btn-outline" id="btnNormalOrder">Nein, normal zur Kasse</button>
+                <button type="button" class="btn" style="background: none; color: #888; font-size: 14px; margin-top: 15px;" onclick="document.getElementById('coinModal').classList.add('hidden')">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL (Mit finalem Preis) -->
     <div id="successModal" class="modal-overlay hidden">
         <div class="modal-box">
             <div class="modal-icon">✅</div>
             <h3 class="modal-title">Bestellung erfolgreich!</h3>
             <p class="modal-text">Vielen Dank! Deine Gerichte wurden erfolgreich übermittelt und können zur gewählten Zeit abgeholt werden.</p>
+            
+            <div class="final-price-box">
+                <div class="final-price-label">Endgültiger Zahlungsbetrag an der Kasse:</div>
+                <div class="final-price-amount" id="finalOrderPriceDisplay">0,00 €</div>
+            </div>
+
             <button type="button" class="btn btn-secondary" onclick="closeModal()">Alles klar</button>
         </div>
     </div>
+
+    <!-- ERROR MODAL -->
     <div id="errorModal" class="modal-overlay hidden">
         <div class="modal-box">
             <div class="modal-icon">❌</div>
@@ -452,13 +506,32 @@
             const drinkName = document.querySelector('input[name="drink"]:checked').value.split('|')[0];
             if (drinkName !== "Kein Getränk") drinkExtra = drinkName;
             
-            cart.push({
-                date: rawDate, time: time,
-                name: document.getElementById('name').value, email: document.getElementById('email').value,
-                menuType: menuType, dishName: dishName, 
-                foodExtra: foodExtra, drinkExtra: drinkExtra,
-                priceNum: calculateCurrentPrice(), cartId: Date.now()
-            });
+            const singlePriceNum = calculateCurrentPrice();
+
+            let existingItem = cart.find(item => 
+                item.date === rawDate && 
+                item.time === time && 
+                item.menuType === menuType && 
+                item.foodExtra === foodExtra && 
+                item.drinkExtra === drinkExtra
+            );
+
+            if (existingItem) {
+                if (existingItem.quantity < 5) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert("Maximale Menge (5) für dieses spezifische Menü und diese Uhrzeit erreicht.");
+                    return;
+                }
+            } else {
+                cart.push({
+                    date: rawDate, time: time,
+                    name: document.getElementById('name').value, email: document.getElementById('email').value,
+                    menuType: menuType, dishName: dishName, 
+                    foodExtra: foodExtra, drinkExtra: drinkExtra,
+                    priceNum: singlePriceNum, quantity: 1, cartId: Date.now()
+                });
+            }
 
             renderCart();
             resetMenuSelection();
@@ -469,6 +542,23 @@
             btn.style.backgroundColor = "#28a745";
             setTimeout(() => { btn.innerText = originalText; btn.style.backgroundColor = "#8cc63f"; }, 1500);
         });
+
+        window.updateQty = function(id, delta) {
+            const item = cart.find(i => i.cartId === id);
+            if (!item) return;
+            
+            let newQty = item.quantity + delta;
+            if (newQty > 5) {
+                alert("Maximale Menge (5) erreicht.");
+                return;
+            }
+            if (newQty <= 0) {
+                removeFromCart(id);
+                return;
+            }
+            item.quantity = newQty;
+            renderCart();
+        }
 
         function renderCart() {
             const cartList = document.getElementById('cartList');
@@ -487,7 +577,9 @@
                 checkoutBtn.disabled = false;
                 
                 cart.forEach(item => {
-                    totalSum += item.priceNum;
+                    const itemTotal = item.priceNum * item.quantity;
+                    totalSum += itemTotal;
+                    
                     const d = new Date(item.date);
                     const displayDate = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth()+1).padStart(2, '0')}.${d.getFullYear()}`;
                     
@@ -499,13 +591,20 @@
                     const li = document.createElement('li');
                     li.className = 'cart-item';
                     li.innerHTML = `
-                        <div class="cart-item-details">
-                            <div class="cart-item-title">${displayDate} - ${item.time} Uhr</div>
-                            <div class="cart-item-sub">${item.menuType}: ${item.dishName} ${subTextHtml}</div>
-                        </div>
-                        <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                            <div class="cart-item-price">${item.priceNum.toFixed(2).replace('.', ',')} €</div>
+                        <div class="cart-item-top">
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">${displayDate} - ${item.time} Uhr</div>
+                                <div class="cart-item-sub">${item.menuType}: ${item.dishName} ${subTextHtml}</div>
+                            </div>
                             <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.cartId})">Löschen</button>
+                        </div>
+                        <div class="cart-item-bottom">
+                            <div class="qty-controls">
+                                <button type="button" class="qty-btn" onclick="updateQty(${item.cartId}, -1)">-</button>
+                                <span class="qty-display">${item.quantity}</span>
+                                <button type="button" class="qty-btn" onclick="updateQty(${item.cartId}, 1)" ${item.quantity >= 5 ? 'disabled' : ''}>+</button>
+                            </div>
+                            <div class="cart-item-price">${itemTotal.toFixed(2).replace('.', ',')} €</div>
                         </div>
                     `;
                     cartList.appendChild(li);
@@ -515,36 +614,80 @@
         }
 
         window.removeFromCart = function(id) { cart = cart.filter(item => item.cartId !== id); renderCart(); }
-        function closeModal() { document.getElementById('successModal').classList.add('hidden'); }
+        window.closeModal = function() { document.getElementById('successModal').classList.add('hidden'); }
 
-        // --- CHECKOUT ---
-        document.getElementById('checkoutBtn').addEventListener('click', async function() {
+        // --- CHECKOUT LOGIK & MÜNZWURF ---
+        document.getElementById('checkoutBtn').addEventListener('click', function() {
             if (cart.length === 0) return;
+            document.getElementById('coinActionButtons').classList.remove('hidden');
+            document.getElementById('coinAnimation').classList.add('hidden');
+            document.getElementById('coinResultBox').style.display = 'none';
+            document.getElementById('coinModal').classList.remove('hidden');
+        });
 
-            const submitBtn = document.getElementById('checkoutBtn');
-            submitBtn.disabled = true; submitBtn.innerText = "Sende Bestellung... ⏳";
+        document.getElementById('btnNormalOrder').addEventListener('click', function() {
+            document.getElementById('coinModal').classList.add('hidden');
+            executeOrder(1.0, "");
+        });
+
+        document.getElementById('btnTossCoin').addEventListener('click', function() {
+            document.getElementById('coinActionButtons').classList.add('hidden');
+            document.getElementById('coinAnimation').classList.remove('hidden');
             
-            // HIER BLEIBT IHRE URL GENAU WIE VORHER
+            setTimeout(() => {
+                document.getElementById('coinAnimation').classList.add('hidden');
+                const resultBox = document.getElementById('coinResultBox');
+                resultBox.style.display = 'block';
+
+                const isHeads = Math.random() < 0.5;
+                const multiplier = isHeads ? 0.5 : 1.5;
+                
+                if (isHeads) {
+                    resultBox.className = 'coin-result-box coin-win';
+                    resultBox.innerHTML = '🎉 KOPF! Glückwunsch, du bekommst 50% Rabatt!<br><br><span style="font-size:14px; font-weight:normal;">Bestellung wird gesendet...</span>';
+                } else {
+                    resultBox.className = 'coin-result-box coin-lose';
+                    resultBox.innerHTML = '💸 ZAHL! Schade, du zahlst 50% Aufschlag.<br><br><span style="font-size:14px; font-weight:normal;">Bestellung wird gesendet...</span>';
+                }
+
+                const tossRemark = isHeads ? "[Münzwurf: KOPF - 50% Rabatt!]" : "[Münzwurf: ZAHL - 50% Aufschlag!]";
+                executeOrder(multiplier, tossRemark);
+                
+            }, 1200);
+        });
+
+        async function executeOrder(priceMultiplier, tossRemarkString) {
+            const submitBtn = document.getElementById('checkoutBtn');
+            submitBtn.disabled = true; 
+            submitBtn.innerText = "Sende Bestellung... ⏳";
+            
             const backendURL = 'https://script.google.com/macros/s/AKfycbz6mCg8URut7ZA_eNubaBVYZlA8tItjr4TMPWR0IjWfJ3t0TcXY8FxdL8aY05OzevI/exec';
-            const remarks = document.getElementById('remarks').value || "-";
+            let baseRemarks = document.getElementById('remarks').value || "-";
+            if (tossRemarkString) {
+                baseRemarks = tossRemarkString + " | " + baseRemarks;
+            }
+
             let successCount = 0;
+            let finalTotalAmount = 0;
 
             for (const item of cart) {
                 const formData = new FormData();
                 
-                // Datum und Zeit getrennt für das Backend
                 formData.set('datum', item.date);
                 formData.set('zeit', item.time);
-                
                 formData.set('name', item.name);
                 formData.set('email', item.email);
                 
-                const priceStr = item.priceNum.toFixed(2).replace('.', ',') + " €";
-                formData.set('menu', `${item.menuType} (${item.dishName} - ${priceStr})`);
+                const adjustedPrice = item.priceNum * item.quantity * priceMultiplier;
+                finalTotalAmount += adjustedPrice;
                 
+                const priceStr = adjustedPrice.toFixed(2).replace('.', ',') + " €";
+                const menuString = `${item.quantity}x ${item.menuType} (${item.dishName} - ${priceStr})`;
+                
+                formData.set('menu', menuString);
                 formData.set('extra', item.foodExtra);
                 formData.set('getraenk', item.drinkExtra);
-                formData.set('bemerkungen', remarks);
+                formData.set('bemerkungen', baseRemarks);
 
                 try {
                     await fetch(backendURL, { method: 'POST', mode: 'no-cors', body: formData });
@@ -552,14 +695,20 @@
                 } catch (error) { console.error("Fehler beim Senden:", error); }
             }
 
+            document.getElementById('coinModal').classList.add('hidden');
+
             if (successCount === cart.length) {
+                document.getElementById('finalOrderPriceDisplay').innerText = finalTotalAmount.toFixed(2).replace('.', ',') + " €";
+                
                 document.getElementById('successModal').classList.remove('hidden');
                 cart = []; renderCart(); document.getElementById('remarks').value = "";
             } else {
                 document.getElementById('errorModal').classList.remove('hidden');
             }
-            submitBtn.disabled = false; submitBtn.innerText = "Jetzt kostenpflichtig bestellen";
-        });
+            
+            submitBtn.disabled = false; 
+            submitBtn.innerText = "Jetzt kostenpflichtig bestellen";
+        }
     </script>
 </body>
 </html>
